@@ -53,3 +53,23 @@ export async function register(email, password, username) {
         throw new Error("Error al hacer el registro")
     }
 }
+
+export async function getProfile(token) {
+    try {
+        const response_http = await fetch(
+            ENVIRONMENT.URL_API + '/api/auth/profile', {
+            method: 'GET',
+            headers: {
+                'Content-type': "application/json",
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const response = await response_http.json()
+        if (!response.ok) {
+            throw new Error(response.message)
+        }
+        return response
+    } catch (error) {
+        throw new Error("Error al obtener el perfil")
+    }
+}

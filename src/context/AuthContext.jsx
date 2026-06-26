@@ -1,5 +1,5 @@
-import { jwtDecode } from "jwt-decode";
 import { createContext, useEffect, useState } from "react";
+import { getProfile } from "../services/authService";
 
 export const AuthContext = createContext({
     isLogged: false,
@@ -14,38 +14,45 @@ export const AuthContextProvider = ({ children }) => {
 
     const auth_token = localStorage.getItem(AUTH_TOKEN_LOCALSTORAGE_KEY)
 
-    function loadUserSesion() {
-        if (auth_token) {
-            const payload = jwtDecode(auth_token)
-            setUserData({
-                email: payload.email,
-                fecha_creacion: payload.fecha_creacion,
-                id: payload.id,
-                nombre: payload.nombre
-            })
+    async function loadUserSesion(token) {
+        if (token) {
+            try {
+                const response = await getProfile(token);
+                if (response.ok) {
+                    setUserData({
+                        email: response.data.user.email,
+                        id: response.data.user.id,
+                        nombre: response.data.user.nombre
+                    });
+                }
+            } catch (error) {
+                console.error("Error cargando sesión:", error);
+                logout();
+            }
         }
     }
 
     useEffect(
         () => {
-            loadUserSesion()
+            loadUserSesion(auth_token)
         },
-        [auth_token]
+        []
     )
 
     const [isLogged, setIsLogged] = useState(Boolean(auth_token))
 
     const [userData, setUserData] = useState(null)
 
-    function login(auth_token) {
-        localStorage.setItem(AUTH_TOKEN_LOCALSTORAGE_KEY, auth_token)
+    function login(new_auth_token) {
+        localStorage.setItem(AUTH_TOKEN_LOCALSTORAGE_KEY, new_auth_token)
         setIsLogged(true)
+        loadUserSesion(new_auth_token)
     }
 
     function logout() {
         localStorage.removeItem(AUTH_TOKEN_LOCALSTORAGE_KEY)
         setIsLogged(false)
-        setUserData(false)
+        setUserData(null)
     }
 
     const providerValues = {
