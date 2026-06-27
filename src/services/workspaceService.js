@@ -63,3 +63,24 @@ export async function deleteWorkspace(token, workspace_id) {
         throw new Error("Error al eliminar workspace")
     }
 }
+
+export async function inviteToWorkspace(token, workspace_id, invited_email, role = 'member') {
+    try {
+        const response_http = await fetch(
+            ENVIRONMENT.URL_API + `/api/workspace/${workspace_id}/members`, {
+            method: 'POST',
+            headers: {
+                'Content-type': "application/json",
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ invited_email, role })
+        })
+        const response = await response_http.json()
+        if (!response.ok) {
+            throw new Error(response.message)
+        }
+        return response
+    } catch (error) {
+        throw new Error(error.message || "Error al invitar al usuario")
+    }
+}

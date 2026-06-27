@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getChannels, createChannel } from '../../../services/channelService';
 
-export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChannelId }) => {
+export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChannelId, refreshKey }) => {
     const [channels, setChannels] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newChannelName, setNewChannelName] = useState('');
@@ -13,7 +13,7 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
         } else {
             setChannels([]);
         }
-    }, [token, workspace]);
+    }, [token, workspace, refreshKey]);
 
     const loadChannels = async () => {
         try {

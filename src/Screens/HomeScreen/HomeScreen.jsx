@@ -13,6 +13,8 @@ export const HomeScreen = () => {
 
     const [activeWorkspace, setActiveWorkspace] = useState(null);
     const [activeChannel, setActiveChannel] = useState(null);
+    // Incrementing this key forces ChannelSidebar to reload its channel list
+    const [channelRefreshKey, setChannelRefreshKey] = useState(0);
 
     function handleLogout() {
         logout();
@@ -32,6 +34,12 @@ export const HomeScreen = () => {
         setActiveChannel(channel);
     };
 
+    // Called when a channel is created from the "+" menu
+    const handleChannelCreated = (newChannel) => {
+        setChannelRefreshKey(k => k + 1);
+        setActiveChannel(newChannel);
+    };
+
     return (
         <div className="slack-layout">
             {/* ─── TOP HEADER ─── */}
@@ -41,7 +49,6 @@ export const HomeScreen = () => {
                     <button title="Adelante">&#8594;</button>
                     <button title="Historial">&#9719;</button>
                 </div>
-
                 <div className="slack-header-search">
                     <span className="search-icon">&#128269;</span>
                     <input
@@ -49,7 +56,6 @@ export const HomeScreen = () => {
                         placeholder={`Buscar en ${activeWorkspace?.nombre ?? 'Slack Clone'}`}
                     />
                 </div>
-
                 <div className="slack-header-right">
                     <button title="Ayuda">?</button>
                 </div>
@@ -57,24 +63,24 @@ export const HomeScreen = () => {
 
             {/* ─── MAIN BODY ─── */}
             <div className="slack-body">
-                {/* 1. Global Nav (Workspaces + nav icons) */}
                 <WorkspaceSidebar
                     token={token}
                     activeWorkspaceId={activeWorkspace?._id}
+                    activeWorkspace={activeWorkspace}
                     onSelectWorkspace={handleSelectWorkspace}
+                    onChannelCreated={handleChannelCreated}
                     userData={userData}
                     onLogout={handleLogout}
                 />
 
-                {/* 2. Channel Sidebar */}
                 <ChannelSidebar
                     token={token}
                     workspace={activeWorkspace}
                     activeChannelId={activeChannel?._id}
                     onSelectChannel={handleSelectChannel}
+                    refreshKey={channelRefreshKey}
                 />
 
-                {/* 3. Chat Area */}
                 <ChatArea
                     token={token}
                     channel={activeChannel}
