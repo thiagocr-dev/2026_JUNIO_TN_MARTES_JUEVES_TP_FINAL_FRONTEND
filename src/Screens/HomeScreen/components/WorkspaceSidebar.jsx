@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { getWorkspaces, createWorkspace, deleteWorkspace } from '../../../services/workspaceService';
 
-export const WorkspaceSidebar = ({ token, onSelectWorkspace, activeWorkspaceId }) => {
+export const WorkspaceSidebar = ({ token, onSelectWorkspace, activeWorkspaceId, userData, onLogout }) => {
     const [workspaces, setWorkspaces] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newWsName, setNewWsName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [activeNav, setActiveNav] = useState('inicio');
 
     useEffect(() => {
-        if (token) {
-            loadWorkspaces();
-        }
+        if (token) loadWorkspaces();
     }, [token]);
 
     const loadWorkspaces = async () => {
@@ -23,13 +22,12 @@ export const WorkspaceSidebar = ({ token, onSelectWorkspace, activeWorkspaceId }
                     descripcion: w.workspace_descripcion
                 }));
                 setWorkspaces(workspacesList);
-                // Si no hay workspace activo pero hay workspaces, selecciona el primero
                 if (workspacesList.length > 0 && !activeWorkspaceId) {
                     onSelectWorkspace(workspacesList[0]);
                 }
             }
         } catch (error) {
-            console.error("Error al cargar workspaces:", error);
+            console.error('Error al cargar workspaces:', error);
         }
     };
 
@@ -41,11 +39,11 @@ export const WorkspaceSidebar = ({ token, onSelectWorkspace, activeWorkspaceId }
             if (response.ok) {
                 setNewWsName('');
                 setIsModalOpen(false);
-                loadWorkspaces();
+                await loadWorkspaces();
                 onSelectWorkspace(response.data.workspace);
             }
         } catch (error) {
-            console.error("Error al crear workspace", error);
+            console.error('Error al crear workspace', error);
         } finally {
             setIsLoading(false);
         }
@@ -53,57 +51,102 @@ export const WorkspaceSidebar = ({ token, onSelectWorkspace, activeWorkspaceId }
 
     const handleDelete = async (e, ws_id) => {
         e.stopPropagation();
-        if (window.confirm("¿Seguro que deseas eliminar este workspace?")) {
+        if (window.confirm('¿Seguro que deseas eliminar este workspace?')) {
             try {
                 const response = await deleteWorkspace(token, ws_id);
                 if (response.ok) {
-                    if (activeWorkspaceId === ws_id) {
-                        onSelectWorkspace(null);
-                    }
+                    if (activeWorkspaceId === ws_id) onSelectWorkspace(null);
                     loadWorkspaces();
                 }
             } catch (error) {
-                console.error("Error al eliminar workspace", error);
-                alert("No tienes permiso para eliminar este workspace o ha ocurrido un error.");
+                console.error('Error al eliminar workspace', error);
+                alert('No tienes permiso para eliminar este workspace o ha ocurrido un error.');
             }
         }
     };
 
+    const initials = userData?.nombre
+        ? userData.nombre.substring(0, 2).toUpperCase()
+        : 'U';
+
+    const navItems = [
+        { id: 'inicio',   icon: '⌂', label: 'Inicio' },
+        { id: 'dm',       icon: '💬', label: 'DMs' },
+        { id: 'activity', icon: '🔔', label: 'Actividad' },
+        { id: 'files',    icon: '📁', label: 'Archivos' },
+        { id: 'more',     icon: '···', label: 'Más' },
+    ];
+
     return (
-        <div className="workspace-sidebar">
+        <div className="global-nav">
+            {/* Active workspace icon (top) */}
             {workspaces.map((ws) => (
                 <div
                     key={ws._id}
-                    className={`workspace-icon ${activeWorkspaceId === ws._id ? 'active' : ''}`}
+                    style={{ position: 'relative', marginBottom: 8 }}
                     onClick={() => onSelectWorkspace(ws)}
                     title={ws.nombre}
-                    style={{ position: 'relative' }}
                 >
-                    {ws.nombre.substring(0, 2).toUpperCase()}
+                    <div
+                        className="global-nav-workspace-btn"
+                        style={{
+                            outline: activeWorkspaceId === ws._id ? '2px solid #fff' : 'none',
+                            outlineOffset: 2,
+                        }}
+                    >
+                        {ws.nombre.substring(0, 2).toUpperCase()}
+                    </div>
                     {activeWorkspaceId === ws._id && (
-                        <button 
+                        <button
                             onClick={(e) => handleDelete(e, ws._id)}
                             style={{
-                                position: 'absolute', top: -5, right: -5, background: '#e01e5a', color: 'white',
-                                border: 'none', borderRadius: '50%', width: '18px', height: '18px',
-                                fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                position: 'absolute', top: -4, right: -4,
+                                background: '#E01E5A', color: '#fff',
+                                border: 'none', borderRadius: '50%',
+                                width: 16, height: 16, fontSize: 9,
+                                cursor: 'pointer', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center',
+                                zIndex: 2,
                             }}
-                            title="Eliminar Workspace"
-                        >
-                            x
-                        </button>
+                            title="Eliminar workspace"
+                        >×</button>
                     )}
                 </div>
             ))}
 
+            {/* Navigation icons */}
+            {navItems.map(item => (
+                <button
+                    key={item.id}
+                    className={`global-nav-item ${activeNav === item.id ? 'active' : ''}`}
+                    onClick={() => setActiveNav(item.id)}
+                    title={item.label}
+                >
+                    <span className="nav-icon">{item.icon}</span>
+                    <span>{item.label}</span>
+                </button>
+            ))}
+
+            <div className="global-nav-spacer" />
+
+            {/* Add workspace */}
             <div
-                className="workspace-icon add-new"
+                className="global-nav-add"
                 onClick={() => setIsModalOpen(true)}
                 title="Crear Workspace"
+            >+</div>
+
+            {/* User avatar */}
+            <div
+                className="global-nav-avatar"
+                title={`${userData?.nombre} — Cerrar sesión`}
+                onClick={onLogout}
             >
-                +
+                {initials}
+                <span className="status-dot" />
             </div>
 
+            {/* Create Workspace Modal */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -113,6 +156,8 @@ export const WorkspaceSidebar = ({ token, onSelectWorkspace, activeWorkspaceId }
                             placeholder="Nombre del Workspace"
                             value={newWsName}
                             onChange={(e) => setNewWsName(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+                            autoFocus
                         />
                         <div className="modal-actions">
                             <button onClick={() => setIsModalOpen(false)} disabled={isLoading}>Cancelar</button>

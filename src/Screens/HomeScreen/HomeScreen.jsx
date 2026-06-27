@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { WorkspaceSidebar } from './components/WorkspaceSidebar';
 import { ChannelSidebar } from './components/ChannelSidebar';
 import { ChatArea } from './components/ChatArea';
-import '../../assets/slack-theme.css'; // Import the Slack Theme
+import '../../assets/slack-theme.css';
 
 export const HomeScreen = () => {
     const navigate = useNavigate();
@@ -20,12 +20,12 @@ export const HomeScreen = () => {
     }
 
     if (!userData) {
-        return <h2>Cargando...</h2>;
+        return <h2 style={{ color: '#fff', padding: 20 }}>Cargando...</h2>;
     }
 
     const handleSelectWorkspace = (workspace) => {
         setActiveWorkspace(workspace);
-        setActiveChannel(null); // Reset channel when workspace changes
+        setActiveChannel(null);
     };
 
     const handleSelectChannel = (channel) => {
@@ -34,38 +34,51 @@ export const HomeScreen = () => {
 
     return (
         <div className="slack-layout">
-            {/* Top Navigation */}
+            {/* ─── TOP HEADER ─── */}
             <div className="slack-header">
-                <input type="text" className="slack-search" placeholder={`Buscar en ${activeWorkspace ? activeWorkspace.nombre : 'Slack Clone'}`} />
-                <button 
-                    onClick={handleLogout} 
-                    style={{ position: 'absolute', right: '20px', background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}
-                >
-                    Salir
-                </button>
+                <div className="slack-header-nav">
+                    <button title="Atrás">&#8592;</button>
+                    <button title="Adelante">&#8594;</button>
+                    <button title="Historial">&#9719;</button>
+                </div>
+
+                <div className="slack-header-search">
+                    <span className="search-icon">&#128269;</span>
+                    <input
+                        type="text"
+                        placeholder={`Buscar en ${activeWorkspace?.nombre ?? 'Slack Clone'}`}
+                    />
+                </div>
+
+                <div className="slack-header-right">
+                    <button title="Ayuda">?</button>
+                </div>
             </div>
 
-            {/* Main Body */}
+            {/* ─── MAIN BODY ─── */}
             <div className="slack-body">
-                {/* 1. Workspaces Sidebar */}
-                <WorkspaceSidebar 
-                    token={token} 
+                {/* 1. Global Nav (Workspaces + nav icons) */}
+                <WorkspaceSidebar
+                    token={token}
                     activeWorkspaceId={activeWorkspace?._id}
-                    onSelectWorkspace={handleSelectWorkspace} 
+                    onSelectWorkspace={handleSelectWorkspace}
+                    userData={userData}
+                    onLogout={handleLogout}
                 />
 
-                {/* 2. Channels Sidebar */}
-                <ChannelSidebar 
+                {/* 2. Channel Sidebar */}
+                <ChannelSidebar
                     token={token}
                     workspace={activeWorkspace}
                     activeChannelId={activeChannel?._id}
                     onSelectChannel={handleSelectChannel}
                 />
 
-                {/* 3. Main Chat Area */}
-                <ChatArea 
+                {/* 3. Chat Area */}
+                <ChatArea
                     token={token}
                     channel={activeChannel}
+                    userData={userData}
                 />
             </div>
         </div>
