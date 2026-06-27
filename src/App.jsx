@@ -34,13 +34,13 @@ const App = () => {
           element={<AuthMiddleware />}
         >
           <Route
-            path="/home"
+            path="/workspaces"
             element={<HomeScreen />}
           />
         </Route>
         <Route
           path="/*"
-          element={<Navigate to={'/home'} />} // si no EXISTE el apartado me redirecciona a HOME
+          element={<Navigate to={'/workspaces'} />} // si no EXISTE el apartado me redirecciona a workspaces
         />
       </Routes>
     </AuthContextProvider>

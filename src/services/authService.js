@@ -28,7 +28,7 @@ export async function login(email, password) {
     }
 }
 
-export async function register(email, password, username) {
+export async function register(email, password, name) {
     try {
         console.log("URL_API:", ENVIRONMENT.URL_API)
         const response_http = await fetch(
@@ -41,7 +41,7 @@ export async function register(email, password, username) {
                 {
                     email: email,
                     password: password,
-                    username: username
+                    name: name
                 }
             )
         }
@@ -71,5 +71,46 @@ export async function getProfile(token) {
         return response
     } catch (error) {
         throw new Error("Error al obtener el perfil")
+    }
+}
+
+export async function resetPasswordRequest(email) {
+    try {
+        const response_http = await fetch(
+            ENVIRONMENT.URL_API + '/api/auth/reset-password-request', {
+            method: 'POST',
+            headers: {
+                'Content-type': "application/json"
+            },
+            body: JSON.stringify({ email })
+        })
+        const response = await response_http.json()
+        if (!response.ok) {
+            throw new Error(response.message)
+        }
+        return response
+    } catch (error) {
+        throw new Error(error.message || "Error al solicitar restablecimiento de contraseña")
+    }
+}
+
+export async function resetPassword(token, newPassword) {
+    try {
+        const response_http = await fetch(
+            ENVIRONMENT.URL_API + '/api/auth/reset-password', {
+            method: 'POST',
+            headers: {
+                'Content-type': "application/json",
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ newPassword })
+        })
+        const response = await response_http.json()
+        if (!response.ok) {
+            throw new Error(response.message)
+        }
+        return response
+    } catch (error) {
+        throw new Error(error.message || "Error al restablecer contraseña")
     }
 }

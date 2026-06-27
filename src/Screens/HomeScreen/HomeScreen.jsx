@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { WorkspaceSidebar } from './components/WorkspaceSidebar';
 import { ChannelSidebar } from './components/ChannelSidebar';
 import { ChatArea } from './components/ChatArea';
+import { MembersModal } from './components/MembersModal';
 import '../../assets/slack-theme.css';
 
 export const HomeScreen = () => {
@@ -15,6 +16,7 @@ export const HomeScreen = () => {
     const [activeChannel, setActiveChannel] = useState(null);
     // Incrementing this key forces ChannelSidebar to reload its channel list
     const [channelRefreshKey, setChannelRefreshKey] = useState(0);
+    const [showMembersModal, setShowMembersModal] = useState(false);
 
     function handleLogout() {
         logout();
@@ -79,14 +81,24 @@ export const HomeScreen = () => {
                     activeChannelId={activeChannel?._id}
                     onSelectChannel={handleSelectChannel}
                     refreshKey={channelRefreshKey}
+                    onOpenMembers={() => setShowMembersModal(true)}
                 />
 
                 <ChatArea
                     token={token}
                     channel={activeChannel}
                     userData={userData}
+                    onOpenMembers={() => setShowMembersModal(true)}
                 />
             </div>
+
+            {showMembersModal && activeWorkspace && (
+                <MembersModal
+                    token={token}
+                    workspace={activeWorkspace}
+                    onClose={() => setShowMembersModal(false)}
+                />
+            )}
         </div>
     );
 };

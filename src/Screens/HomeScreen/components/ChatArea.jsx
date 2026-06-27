@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getMessages, sendMessage } from '../../../services/messageService';
 
-export const ChatArea = ({ token, channel, userData }) => {
+export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const messagesEndRef = useRef(null);
@@ -9,6 +9,8 @@ export const ChatArea = ({ token, channel, userData }) => {
     useEffect(() => {
         if (token && channel) {
             loadMessages();
+            const interval = setInterval(loadMessages, 4000);
+            return () => clearInterval(interval);
         } else {
             setMessages([]);
         }
@@ -94,7 +96,7 @@ export const ChatArea = ({ token, channel, userData }) => {
                 </div>
                 <div className="chat-header-spacer" />
                 <div className="chat-header-actions">
-                    <button className="ch-action-btn">👤 Invitar a compañeros de equipo</button>
+                    <button className="ch-action-btn" onClick={onOpenMembers}>👤 Invitar a compañeros de equipo</button>
                     <button className="ch-icon-btn" title="Audio">🎧</button>
                     <button className="ch-icon-btn" title="Notificaciones">🔔</button>
                     <button className="ch-icon-btn" title="Buscar">🔍</button>

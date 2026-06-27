@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getChannels, createChannel } from '../../../services/channelService';
+import { getWorkspaceMembers } from '../../../services/workspaceService';
 
-export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChannelId, refreshKey }) => {
+export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChannelId, refreshKey, onOpenMembers }) => {
     const [channels, setChannels] = useState([]);
+    const [members, setMembers] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newChannelName, setNewChannelName] = useState('');
     const [isCreating, setIsCreating] = useState(false);
@@ -10,8 +12,10 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
     useEffect(() => {
         if (token && workspace) {
             loadChannels();
+            loadMembers();
         } else {
             setChannels([]);
+            setMembers([]);
         }
     }, [token, workspace, refreshKey]);
 
@@ -26,6 +30,17 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
             }
         } catch (error) {
             console.error('Error al cargar canales:', error);
+        }
+    };
+
+    const loadMembers = async () => {
+        try {
+            const response = await getWorkspaceMembers(token, workspace._id);
+            if (response.ok) {
+                setMembers(response.data.workspace_members_info || []);
+            }
+        } catch (error) {
+            console.error('Error al cargar miembros:', error);
         }
     };
 
@@ -127,6 +142,38 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
                     </div>
                 )}
 
+                {/* Mensajes directos / Miembros (real data) */}
+                {workspace && (
+                    <div className="cs-section">
+                        <div className="cs-section-header">
+                            <span>👤 Miembros ({members.length})</span>
+                        </div>
+                        {members.map((member) => (
+                            <div
+                                key={member.user_id}
+                                className="cs-channel-item"
+                                style={{ cursor: 'default', display: 'flex', alignItems: 'center', gap: '8px' }}
+                            >
+                                <span style={{
+                                    width: 8, height: 8, borderRadius: '50%',
+                                    background: '#2EB67D', display: 'inline-block'
+                                }} />
+                                <span>
+                                    {member.user_nombre} 
+                                    <span style={{ fontSize: 11, opacity: 0.5, marginLeft: 4 }}>
+                                        ({member.member_rol})
+                                    </span>
+                                </span>
+                            </div>
+                        ))}
+                        {members.length === 0 && (
+                            <div className="cs-section-note">
+                                No hay miembros en este espacio.
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 {/* Mensajes directos (static) */}
                 <div className="cs-section">
                     <div className="cs-section-header">
@@ -154,7 +201,7 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
                 <div className="cs-footer-note">
                     <strong>Slack</strong> funciona mejor cuando lo usas en conjunto.
                 </div>
-                <button className="cs-invite-btn">
+                <button className="cs-invite-btn" onClick={onOpenMembers}>
                     👤 Invitar a compañeros de equipo
                 </button>
             </div>

@@ -43,10 +43,10 @@ export const AuthContextProvider = ({ children }) => {
 
     const [userData, setUserData] = useState(null)
 
-    function login(new_auth_token) {
+    async function login(new_auth_token) {
         localStorage.setItem(AUTH_TOKEN_LOCALSTORAGE_KEY, new_auth_token)
         setIsLogged(true)
-        loadUserSesion(new_auth_token)
+        await loadUserSesion(new_auth_token)
     }
 
     function logout() {

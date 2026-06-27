@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getWorkspaces, createWorkspace, deleteWorkspace, inviteToWorkspace } from '../../../services/workspaceService';
+import { getWorkspaces, createWorkspace, deleteWorkspace, updateWorkspace, inviteToWorkspace } from '../../../services/workspaceService';
 import { createChannel } from '../../../services/channelService';
 
 export const WorkspaceSidebar = ({
@@ -20,7 +20,7 @@ export const WorkspaceSidebar = ({
     const menuRef = useRef(null);
 
     // Modals
-    const [modal, setModal] = useState(null); // 'workspace' | 'channel' | 'invite'
+    const [modal, setModal] = useState(null); // 'workspace' | 'channel' | 'invite' | 'edit_workspace'
 
     // Form state
     const [newWsName, setNewWsName] = useState('');
@@ -29,6 +29,11 @@ export const WorkspaceSidebar = ({
     const [inviteRole, setInviteRole] = useState('member');
     const [formLoading, setFormLoading] = useState(false);
     const [formFeedback, setFormFeedback] = useState('');
+
+    // Edit workspace form state
+    const [editWsId, setEditWsId] = useState('');
+    const [editWsName, setEditWsName] = useState('');
+    const [editWsDesc, setEditWsDesc] = useState('');
 
     useEffect(() => {
         if (token) loadWorkspaces();
@@ -77,6 +82,41 @@ export const WorkspaceSidebar = ({
         setInviteEmail('');
         setInviteRole('member');
         setFormFeedback('');
+        setEditWsId('');
+        setEditWsName('');
+        setEditWsDesc('');
+    };
+
+    const handleEditClick = (e, ws) => {
+        e.stopPropagation();
+        setEditWsId(ws._id);
+        setEditWsName(ws.nombre);
+        setEditWsDesc(ws.descripcion || '');
+        setModal('edit_workspace');
+        setFormFeedback('');
+    };
+
+    const handleUpdateWorkspace = async () => {
+        if (!editWsName.trim() || formLoading) return;
+        setFormLoading(true);
+        try {
+            const res = await updateWorkspace(token, editWsId, editWsName, editWsDesc);
+            if (res.ok) {
+                closeModal();
+                await loadWorkspaces();
+                if (activeWorkspaceId === editWsId) {
+                    onSelectWorkspace({
+                        _id: editWsId,
+                        nombre: editWsName,
+                        descripcion: editWsDesc
+                    });
+                }
+            }
+        } catch (err) {
+            setFormFeedback(err.message || 'Error al actualizar el workspace.');
+        } finally {
+            setFormLoading(false);
+        }
     };
 
     /* ── Create Workspace ── */
@@ -168,6 +208,16 @@ export const WorkspaceSidebar = ({
     /* ── Create Menu Items ── */
     const createItems = [
         {
+            id: 'workspace',
+            icon: '🏢',
+            color: '#4A154B',
+            title: 'Espacio de trabajo',
+            desc: 'Crear un nuevo espacio de trabajo',
+            badge: null,
+            disabled: false,
+            action: () => openModal('workspace'),
+        },
+        {
             id: 'message',
             icon: '✏️',
             color: '#E01E5A',
@@ -243,18 +293,32 @@ export const WorkspaceSidebar = ({
                             {ws.nombre.substring(0, 2).toUpperCase()}
                         </div>
                         {activeWorkspaceId === ws._id && (
-                            <button
-                                onClick={(e) => handleDelete(e, ws._id)}
-                                style={{
-                                    position: 'absolute', top: -4, right: -4,
-                                    background: '#E01E5A', color: '#fff',
-                                    border: 'none', borderRadius: '50%',
-                                    width: 16, height: 16, fontSize: 9,
-                                    cursor: 'pointer', display: 'flex',
-                                    alignItems: 'center', justifyContent: 'center', zIndex: 2,
-                                }}
-                                title="Eliminar workspace"
-                            >×</button>
+                            <>
+                                <button
+                                    onClick={(e) => handleEditClick(e, ws)}
+                                    style={{
+                                        position: 'absolute', top: -4, left: -4,
+                                        background: '#1164A3', color: '#fff',
+                                        border: 'none', borderRadius: '50%',
+                                        width: 16, height: 16, fontSize: 9,
+                                        cursor: 'pointer', display: 'flex',
+                                        alignItems: 'center', justifyContent: 'center', zIndex: 2,
+                                    }}
+                                    title="Editar workspace"
+                                >✎</button>
+                                <button
+                                    onClick={(e) => handleDelete(e, ws._id)}
+                                    style={{
+                                        position: 'absolute', top: -4, right: -4,
+                                        background: '#E01E5A', color: '#fff',
+                                        border: 'none', borderRadius: '50%',
+                                        width: 16, height: 16, fontSize: 9,
+                                        cursor: 'pointer', display: 'flex',
+                                        alignItems: 'center', justifyContent: 'center', zIndex: 2,
+                                    }}
+                                    title="Eliminar workspace"
+                                >×</button>
+                            </>
                         )}
                     </div>
                 ))}
@@ -452,6 +516,47 @@ export const WorkspaceSidebar = ({
                             <button onClick={closeModal} disabled={formLoading}>Cancelar</button>
                             <button className="send-btn" onClick={handleInvite} disabled={formLoading || !activeWorkspace}>
                                 {formLoading ? 'Enviando...' : 'Invitar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Workspace */}
+            {modal === 'edit_workspace' && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Editar Workspace</h2>
+                        <input
+                            type="text" placeholder="Nuevo nombre del Workspace"
+                            value={editWsName} onChange={e => setEditWsName(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleUpdateWorkspace()}
+                            style={{
+                                width: '100%', padding: '9px 12px', marginBottom: 12,
+                                background: 'rgba(255,255,255,0.08)',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                color: '#fff', borderRadius: 6, fontSize: 14,
+                                fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box'
+                            }}
+                            autoFocus
+                        />
+                        <input
+                            type="text" placeholder="Nueva descripción"
+                            value={editWsDesc} onChange={e => setEditWsDesc(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleUpdateWorkspace()}
+                            style={{
+                                width: '100%', padding: '9px 12px', marginBottom: 16,
+                                background: 'rgba(255,255,255,0.08)',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                color: '#fff', borderRadius: 6, fontSize: 14,
+                                fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box'
+                            }}
+                        />
+                        {formFeedback && <p style={{ color: '#E01E5A', fontSize: 13, marginBottom: 8 }}>{formFeedback}</p>}
+                        <div className="modal-actions">
+                            <button onClick={closeModal} disabled={formLoading}>Cancelar</button>
+                            <button className="send-btn" onClick={handleUpdateWorkspace} disabled={formLoading}>
+                                {formLoading ? 'Guardando...' : 'Guardar'}
                             </button>
                         </div>
                     </div>

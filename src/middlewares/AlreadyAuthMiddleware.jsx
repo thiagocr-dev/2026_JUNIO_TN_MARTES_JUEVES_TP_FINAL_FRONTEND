@@ -10,7 +10,7 @@ function AlreadyAuthMiddleware() {
         return <Outlet />
     }
     else {
-        return <Navigate to={'/home'} />
+        return <Navigate to={'/workspaces'} />
     }
 }
 
