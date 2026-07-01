@@ -1,0 +1,202 @@
+.ws-item-container {
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.ws-btn-active {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.ws-edit-btn {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    background: #1164A3;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.ws-delete-btn {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #E01E5A;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.ws-nav-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ws-menu-container {
+    position: relative;
+}
+
+.ws-dropdown-menu {
+    position: absolute;
+    bottom: 44px;
+    left: 60px;
+    width: 300px;
+    background: #1E1D21;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.ws-dropdown-header {
+    padding: 12px 16px 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #9B9B9B;
+    letter-spacing: 0.04em;
+}
+
+.ws-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 16px;
+    transition: background 0.12s;
+    cursor: pointer;
+}
+
+.ws-dropdown-item:hover:not(.ws-dropdown-item-disabled) {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.ws-dropdown-item-disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.ws-dropdown-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.ws-dropdown-icon-channel {
+    font-size: 18px;
+}
+
+.ws-dropdown-icon-default {
+    font-size: 16px;
+}
+
+.ws-dropdown-text-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.ws-dropdown-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #D1D2D3;
+}
+
+.ws-dropdown-desc {
+    font-size: 12px;
+    color: #9B9B9B;
+    margin-top: 1px;
+}
+
+.ws-dropdown-badge {
+    background: linear-gradient(90deg, #ECB22E, #E01E5A);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+.ws-avatar {
+    margin-top: 8px;
+}
+
+.ws-feedback-error {
+    color: #E01E5A;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.ws-feedback-warn {
+    color: #ECB22E;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.ws-feedback-success {
+    color: #2EB67D;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.ws-invite-text {
+    color: #9B9B9B;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.ws-invite-text-bold {
+    color: #fff;
+}
+
+.ws-select {
+    width: 100%;
+    padding: 9px 12px;
+    margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+}
+
+.ws-input {
+    width: 100%;
+    padding: 9px 12px;
+    margin-bottom: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.ws-input-last {
+    margin-bottom: 16px;
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getMessages, sendMessage } from '../../../services/messageService';
+import './ChatArea.css';
 
 export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
     const [messages, setMessages] = useState([]);
@@ -77,10 +78,10 @@ export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
     /* ─── No channel selected ─── */
     if (!channel) {
         return (
-            <div className="chat-main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
-                    <div style={{ fontSize: 48, marginBottom: 12 }}>💬</div>
-                    <h2 style={{ color: 'var(--text-heading)', marginBottom: 8 }}>Selecciona un canal</h2>
+            <div className="chat-main ca-empty-state">
+                <div className="ca-empty-inner">
+                    <div className="ca-empty-icon">💬</div>
+                    <h2 className="ca-empty-title">Selecciona un canal</h2>
                     <p>Elige un canal de la barra lateral para empezar a chatear.</p>
                 </div>
             </div>
@@ -100,10 +101,10 @@ export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
                 <div className="chat-header-spacer" />
                 <div className="chat-header-actions">
                     <button className="ch-action-btn" onClick={onOpenMembers}>👤 Invitar a compañeros de equipo</button>
-                    <button className="ch-icon-btn" title="Audio">🎧</button>
-                    <button className="ch-icon-btn" title="Notificaciones">🔔</button>
-                    <button className="ch-icon-btn" title="Buscar">🔍</button>
-                    <button className="ch-icon-btn" title="Más opciones">⋮</button>
+                    <button className="ch-icon-btn ca-disabled" title="Audio (Próximamente)">🎧</button>
+                    <button className="ch-icon-btn ca-disabled" title="Notificaciones (Próximamente)">🔔</button>
+                    <button className="ch-icon-btn ca-disabled" title="Buscar (Próximamente)">🔍</button>
+                    <button className="ch-icon-btn ca-disabled" title="Más opciones (Próximamente)">⋮</button>
                 </div>
             </div>
 
@@ -112,10 +113,10 @@ export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
                 <div className="chat-tab active">
                     <span>💬</span> Mensajes
                 </div>
-                <div className="chat-tab">
+                <div className="chat-tab ca-disabled" title="Próximamente">
                     <span>🖼</span> Agregar canvas
                 </div>
-                <button className="chat-tab-add" title="Más">+</button>
+                <button className="chat-tab-add ca-disabled" title="Más (Próximamente)">+</button>
             </div>
 
             {/* ─── Messages / Welcome ─── */}
@@ -174,17 +175,17 @@ export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
                 <div className="chat-input-box">
                     {/* Top formatting toolbar */}
                     <div className="input-toolbar-top">
-                        <button className="input-tool-btn" title="Negrita"><b>B</b></button>
-                        <button className="input-tool-btn" title="Cursiva"><i>I</i></button>
-                        <button className="input-tool-btn" title="Tachado"><s>S</s></button>
+                        <button className="input-tool-btn ca-disabled" title="Negrita (Próximamente)"><b>B</b></button>
+                        <button className="input-tool-btn ca-disabled" title="Cursiva (Próximamente)"><i>I</i></button>
+                        <button className="input-tool-btn ca-disabled" title="Tachado (Próximamente)"><s>S</s></button>
                         <div className="input-tool-divider" />
-                        <button className="input-tool-btn" title="Enlace">🔗</button>
+                        <button className="input-tool-btn ca-disabled" title="Enlace (Próximamente)">🔗</button>
                         <div className="input-tool-divider" />
-                        <button className="input-tool-btn" title="Lista numerada">1.</button>
-                        <button className="input-tool-btn" title="Lista">•</button>
+                        <button className="input-tool-btn ca-disabled" title="Lista numerada (Próximamente)">1.</button>
+                        <button className="input-tool-btn ca-disabled" title="Lista (Próximamente)">•</button>
                         <div className="input-tool-divider" />
-                        <button className="input-tool-btn" title="Código">&lt;/&gt;</button>
-                        <button className="input-tool-btn" title="Bloque">⬜</button>
+                        <button className="input-tool-btn ca-disabled" title="Código (Próximamente)">&lt;/&gt;</button>
+                        <button className="input-tool-btn ca-disabled" title="Bloque (Próximamente)">⬜</button>
                     </div>
 
                     {/* Text input */}
@@ -199,12 +200,12 @@ export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
 
                     {/* Bottom toolbar */}
                     <div className="input-toolbar-bottom">
-                        <button className="input-tool-bottom-btn" title="Adjuntar">+</button>
-                        <button className="input-tool-bottom-btn" title="Formato de texto">Aa</button>
-                        <button className="input-tool-bottom-btn" title="Emoji">😊</button>
-                        <button className="input-tool-bottom-btn" title="Mencionar">@</button>
-                        <button className="input-tool-bottom-btn" title="Video">🎬</button>
-                        <button className="input-tool-bottom-btn" title="Más">◻</button>
+                        <button className="input-tool-bottom-btn ca-disabled" title="Adjuntar (Próximamente)">+</button>
+                        <button className="input-tool-bottom-btn ca-disabled" title="Formato de texto (Próximamente)">Aa</button>
+                        <button className="input-tool-bottom-btn ca-disabled" title="Emoji (Próximamente)">😊</button>
+                        <button className="input-tool-bottom-btn ca-disabled" title="Mencionar (Próximamente)">@</button>
+                        <button className="input-tool-bottom-btn ca-disabled" title="Video (Próximamente)">🎬</button>
+                        <button className="input-tool-bottom-btn ca-disabled" title="Más (Próximamente)">◻</button>
                         <div className="input-bottom-spacer" />
                         <button
                             className="send-btn"
@@ -216,7 +217,7 @@ export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
                         </button>
                     </div>
                 </div>
-                {chatError && <div style={{ color: '#E01E5A', fontSize: 13, marginTop: 8, paddingLeft: 8 }}>{chatError}</div>}
+                {chatError && <div className="ca-error">{chatError}</div>}
             </div>
         </div>
     );

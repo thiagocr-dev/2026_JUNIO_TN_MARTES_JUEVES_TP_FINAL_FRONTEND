@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getChannels, createChannel } from '../../../services/channelService';
 import { getWorkspaceMembers } from '../../../services/workspaceService';
+import './ChannelSidebar.css';
 
 export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChannelId, refreshKey, onOpenMembers }) => {
     const [channels, setChannels] = useState([]);
@@ -76,12 +77,12 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
                         {workspaceName} <span>▾</span>
                     </div>
                     <div className="cs-header-icons">
-                        <button className="cs-icon-btn" title="Configuración">⚙</button>
-                        <button className="cs-icon-btn" title="Redactar">✏</button>
+                        <button className="cs-icon-btn cs-disabled" title="Configuración (Próximamente)">⚙</button>
+                        <button className="cs-icon-btn cs-disabled" title="Redactar (Próximamente)">✏</button>
                     </div>
                 </div>
                 {workspace && (
-                    <button className="cs-plan-btn">
+                    <button className="cs-plan-btn cs-disabled" title="Cambiar de plan (Próximamente)">
                         <span>🚀</span> Cambiar de plan
                     </button>
                 )}
@@ -94,11 +95,11 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
 
             {/* ── Static Nav Items ─── */}
             <div className="cs-nav-items">
-                <div className="cs-nav-item">
+                <div className="cs-nav-item cs-disabled" title="Juntas (Próximamente)">
                     <span className="cs-nav-icon">🎉</span>
                     Juntas
                 </div>
-                <div className="cs-nav-item">
+                <div className="cs-nav-item cs-disabled" title="Directorios (Próximamente)">
                     <span className="cs-nav-icon">⊞</span>
                     Directorios
                 </div>
@@ -154,16 +155,12 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
                         {members.map((member) => (
                             <div
                                 key={member.user_id}
-                                className="cs-channel-item"
-                                style={{ cursor: 'default', display: 'flex', alignItems: 'center', gap: '8px' }}
+                                className="cs-channel-item cs-member-item"
                             >
-                                <span style={{
-                                    width: 8, height: 8, borderRadius: '50%',
-                                    background: '#2EB67D', display: 'inline-block'
-                                }} />
+                                <span className="cs-member-status" />
                                 <span>
                                     {member.user_nombre} 
-                                    <span style={{ fontSize: 11, opacity: 0.5, marginLeft: 4 }}>
+                                    <span className="cs-member-role">
                                         ({member.member_rol})
                                     </span>
                                 </span>
@@ -181,7 +178,7 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
                 <div className="cs-section">
                     <div className="cs-section-header">
                         <span>💬 Mensajes directos</span>
-                        <button className="cs-add-btn" title="Nuevo DM">+</button>
+                        <button className="cs-add-btn cs-disabled" title="Nuevo DM (Próximamente)">+</button>
                     </div>
                 </div>
 
@@ -190,11 +187,11 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
                     <div className="cs-section-header">
                         <span>⊞ Aplicaciones</span>
                     </div>
-                    <div className="cs-channel-item">
-                        <span style={{ fontSize: 14 }}>🤖</span> Slackbot
+                    <div className="cs-channel-item cs-disabled" title="Slackbot (Próximamente)">
+                        <span className="cs-app-icon">🤖</span> Slackbot
                     </div>
-                    <div className="cs-channel-item">
-                        <span style={{ fontSize: 14 }}>💼</span> Slack
+                    <div className="cs-channel-item cs-disabled" title="Slack (Próximamente)">
+                        <span className="cs-app-icon">💼</span> Slack
                     </div>
                 </div>
             </div>
@@ -222,7 +219,7 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
                             onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
                             autoFocus
                         />
-                        {errorMsg && <p style={{ color: '#E01E5A', fontSize: 13, marginBottom: 8, marginTop: -8 }}>{errorMsg}</p>}
+                        {errorMsg && <p className="cs-error-msg">{errorMsg}</p>}
                         <div className="modal-actions">
                             <button onClick={() => setIsModalOpen(false)} disabled={isCreating}>Cancelar</button>
                             <button onClick={handleCreate} className="send-btn" disabled={isCreating}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getWorkspaceMembers, inviteToWorkspace } from '../../../services/workspaceService';
+import './MembersModal.css';
 
 export const MembersModal = ({ token, workspace, onClose }) => {
     const [members, setMembers] = useState([]);
@@ -50,143 +51,91 @@ export const MembersModal = ({ token, workspace, onClose }) => {
     };
 
     return (
-        <div className="modal-overlay" style={{ zIndex: 2000 }}>
-            <div className="modal-content" style={{ width: '500px', maxWidth: '90%', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h2 style={{ margin: 0 }}>Miembros de {workspace.nombre}</h2>
+        <div className="modal-overlay mm-modal-overlay">
+            <div className="modal-content mm-modal-content">
+                <div className="mm-modal-header">
+                    <h2 className="mm-modal-title">Miembros de {workspace.nombre}</h2>
                     <button 
                         onClick={onClose} 
-                        style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '20px', cursor: 'pointer' }}
+                        className="mm-close-btn"
                     >
                         &times;
                     </button>
                 </div>
 
                 {/* ─── List of current members ─── */}
-                <div style={{ flex: 1, overflowY: 'auto', marginBottom: '20px', paddingRight: '4px' }}>
-                    <h4 style={{ color: '#9B9B9B', marginBottom: '10px' }}>Miembros actuales</h4>
+                <div className="mm-members-list">
+                    <h4 className="mm-section-label">Miembros actuales</h4>
                     {loadingMembers ? (
-                        <p style={{ color: '#9B9B9B', fontSize: '13px' }}>Cargando miembros...</p>
+                        <p className="mm-loading-text">Cargando miembros...</p>
                     ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div className="mm-members-container">
                             {members.map((member) => (
                                 <div 
                                     key={member.user_id} 
-                                    style={{ 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        justifyContent: 'space-between',
-                                        padding: '8px 12px',
-                                        background: 'rgba(255, 255, 255, 0.04)',
-                                        borderRadius: '6px'
-                                    }}
+                                    className="mm-member-row"
                                 >
                                     <div>
-                                        <div style={{ fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>
+                                        <div className="mm-member-name">
                                             {member.user_nombre}
                                         </div>
-                                        <div style={{ fontSize: '12px', color: '#9B9B9B' }}>
+                                        <div className="mm-member-email">
                                             {member.user_email}
                                         </div>
                                     </div>
-                                    <span style={{ 
-                                        fontSize: '11px', 
-                                        padding: '3px 8px', 
-                                        borderRadius: '10px', 
-                                        background: member.member_rol === 'owner' ? '#E01E5A' : '#1164A3',
-                                        color: '#fff',
-                                        textTransform: 'capitalize'
-                                    }}>
+                                    <span className={member.member_rol === 'owner' ? 'mm-role-badge-owner' : 'mm-role-badge-member'}>
                                         {member.member_rol}
                                     </span>
                                 </div>
                             ))}
                             {members.length === 0 && (
-                                <p style={{ color: '#9B9B9B', fontSize: '13px' }}>No hay miembros activos.</p>
+                                <p className="mm-empty-text">No hay miembros activos.</p>
                             )}
                         </div>
                     )}
                 </div>
 
-                <hr style={{ border: 'none', borderTop: '1px solid rgba(255, 255, 255, 0.1)', margin: '0 0 20px 0' }} />
+                <hr className="mm-divider" />
 
                 {/* ─── Form to invite ─── */}
                 <div>
-                    <h4 style={{ color: '#9B9B9B', marginBottom: '12px' }}>Invitar a un nuevo miembro</h4>
+                    <h4 className="mm-invite-label">Invitar a un nuevo miembro</h4>
                     <form onSubmit={handleInvite}>
-                        <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+                        <div className="mm-invite-row">
                             <input
                                 type="email"
                                 placeholder="correo@ejemplo.com"
                                 value={inviteEmail}
                                 onChange={(e) => setInviteEmail(e.target.value)}
                                 required
-                                style={{
-                                    flex: 1,
-                                    padding: '9px 12px',
-                                    background: 'rgba(255,255,255,0.08)',
-                                    border: '1px solid rgba(255,255,255,0.2)',
-                                    color: '#fff',
-                                    borderRadius: 6,
-                                    fontSize: 14,
-                                    outline: 'none',
-                                }}
+                                className="mm-invite-input"
                             />
                             <select
                                 value={inviteRole}
                                 onChange={(e) => setInviteRole(e.target.value)}
-                                style={{
-                                    width: '110px',
-                                    padding: '9px 12px',
-                                    background: 'rgba(255,255,255,0.08)',
-                                    border: '1px solid rgba(255,255,255,0.2)',
-                                    color: '#fff',
-                                    borderRadius: 6,
-                                    fontSize: 14,
-                                    outline: 'none',
-                                }}
+                                className="mm-invite-select"
                             >
                                 <option value="member">Miembro</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
                         {formFeedback && (
-                            <p style={{ 
-                                fontSize: 13, 
-                                margin: '0 0 12px 0', 
-                                color: formFeedback.startsWith('✅') ? '#2EB67D' : '#E01E5A' 
-                            }}>
+                            <p className={formFeedback.startsWith('✅') ? 'mm-feedback-success' : 'mm-feedback-error'}>
                                 {formFeedback}
                             </p>
                         )}
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                        <div className="mm-actions-row">
                             <button 
                                 type="button" 
                                 onClick={onClose} 
-                                style={{
-                                    padding: '8px 16px',
-                                    background: 'transparent',
-                                    border: '1px solid rgba(255,255,255,0.2)',
-                                    color: '#fff',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer'
-                                }}
+                                className="mm-cancel-btn"
                             >
                                 Cerrar
                             </button>
                             <button 
                                 type="submit" 
-                                className="send-btn" 
+                                className="send-btn mm-submit-btn" 
                                 disabled={formLoading}
-                                style={{
-                                    padding: '8px 16px',
-                                    background: '#1164A3',
-                                    color: '#fff',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    fontWeight: 'bold'
-                                }}
                             >
                                 {formLoading ? 'Enviando...' : 'Invitar'}
                             </button>

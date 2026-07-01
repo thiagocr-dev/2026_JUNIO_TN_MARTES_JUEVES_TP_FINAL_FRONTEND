@@ -6,6 +6,7 @@ import { ChannelSidebar } from './components/ChannelSidebar';
 import { ChatArea } from './components/ChatArea';
 import { MembersModal } from './components/MembersModal';
 import '../../assets/slack-theme.css';
+import './HomeScreen.css';
 
 export const HomeScreen = () => {
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ export const HomeScreen = () => {
     }
 
     if (!userData) {
-        return <h2 style={{ color: '#fff', padding: 20 }}>Cargando...</h2>;
+        return <h2 className="hs-loading">Cargando...</h2>;
     }
 
     const handleSelectWorkspace = (workspace) => {
@@ -47,9 +48,9 @@ export const HomeScreen = () => {
             {/* ─── TOP HEADER ─── */}
             <div className="slack-header">
                 <div className="slack-header-nav">
-                    <button title="Atrás">&#8592;</button>
-                    <button title="Adelante">&#8594;</button>
-                    <button title="Historial">&#9719;</button>
+                    <button title="Atrás (Próximamente)" className="hs-disabled-btn">&#8592;</button>
+                    <button title="Adelante (Próximamente)" className="hs-disabled-btn">&#8594;</button>
+                    <button title="Historial (Próximamente)" className="hs-disabled-btn">&#9719;</button>
                 </div>
                 <div className="slack-header-search">
                     <span className="search-icon">&#128269;</span>
@@ -59,7 +60,7 @@ export const HomeScreen = () => {
                     />
                 </div>
                 <div className="slack-header-right">
-                    <button title="Ayuda">?</button>
+                    <button title="Ayuda (Próximamente)" className="hs-disabled-btn">?</button>
                 </div>
             </div>
 

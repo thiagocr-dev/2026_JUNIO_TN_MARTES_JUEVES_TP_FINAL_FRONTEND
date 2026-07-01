@@ -1,0 +1,36 @@
+.ca-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ca-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ca-empty-inner {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.ca-empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.ca-empty-title {
+    color: var(--text-heading);
+    margin-bottom: 8px;
+}
+
+.ca-msg-avatar {
+    background: linear-gradient(135deg, #E01E5A, #E07E2E);
+}
+
+.ca-error {
+    color: #E01E5A;
+    font-size: 13px;
+    margin-top: 8px;
+    padding-left: 8px;
+}

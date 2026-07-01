@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getWorkspaces, createWorkspace, deleteWorkspace, updateWorkspace, inviteToWorkspace } from '../../../services/workspaceService';
 import { createChannel } from '../../../services/channelService';
+import './WorkspaceSidebar.css';
 
 export const WorkspaceSidebar = ({
     token,
@@ -198,11 +199,11 @@ export const WorkspaceSidebar = ({
     const initials = userData?.nombre?.substring(0, 2).toUpperCase() ?? 'U';
 
     const navItems = [
-        { id: 'inicio',   icon: '⌂',   label: 'Inicio' },
-        { id: 'dm',       icon: '💬',   label: 'DMs' },
-        { id: 'activity', icon: '🔔',   label: 'Actividad' },
-        { id: 'files',    icon: '📁',   label: 'Archivos' },
-        { id: 'more',     icon: '···',  label: 'Más' },
+        { id: 'inicio',   icon: '⌂',   label: 'Inicio', disabled: false },
+        { id: 'dm',       icon: '💬',   label: 'DMs', disabled: true },
+        { id: 'activity', icon: '🔔',   label: 'Actividad', disabled: true },
+        { id: 'files',    icon: '📁',   label: 'Archivos', disabled: true },
+        { id: 'more',     icon: '···',  label: 'Más', disabled: true },
     ];
 
     /* ── Create Menu Items ── */
@@ -282,13 +283,12 @@ export const WorkspaceSidebar = ({
                 {workspaces.map((ws) => (
                     <div
                         key={ws._id}
-                        style={{ position: 'relative', marginBottom: 8 }}
+                        className="ws-item-container"
                         onClick={() => onSelectWorkspace(ws)}
                         title={ws.nombre}
                     >
                         <div
-                            className="global-nav-workspace-btn"
-                            style={{ outline: activeWorkspaceId === ws._id ? '2px solid #fff' : 'none', outlineOffset: 2 }}
+                            className={activeWorkspaceId === ws._id ? "global-nav-workspace-btn ws-btn-active" : "global-nav-workspace-btn"}
                         >
                             {ws.nombre.substring(0, 2).toUpperCase()}
                         </div>
@@ -296,26 +296,12 @@ export const WorkspaceSidebar = ({
                             <>
                                 <button
                                     onClick={(e) => handleEditClick(e, ws)}
-                                    style={{
-                                        position: 'absolute', top: -4, left: -4,
-                                        background: '#1164A3', color: '#fff',
-                                        border: 'none', borderRadius: '50%',
-                                        width: 16, height: 16, fontSize: 9,
-                                        cursor: 'pointer', display: 'flex',
-                                        alignItems: 'center', justifyContent: 'center', zIndex: 2,
-                                    }}
+                                    className="ws-edit-btn"
                                     title="Editar workspace"
                                 >✎</button>
                                 <button
                                     onClick={(e) => handleDelete(e, ws._id)}
-                                    style={{
-                                        position: 'absolute', top: -4, right: -4,
-                                        background: '#E01E5A', color: '#fff',
-                                        border: 'none', borderRadius: '50%',
-                                        width: 16, height: 16, fontSize: 9,
-                                        cursor: 'pointer', display: 'flex',
-                                        alignItems: 'center', justifyContent: 'center', zIndex: 2,
-                                    }}
+                                    className="ws-delete-btn"
                                     title="Eliminar workspace"
                                 >×</button>
                             </>
@@ -327,9 +313,9 @@ export const WorkspaceSidebar = ({
                 {navItems.map(item => (
                     <button
                         key={item.id}
-                        className={`global-nav-item ${activeNav === item.id ? 'active' : ''}`}
-                        onClick={() => setActiveNav(item.id)}
-                        title={item.label}
+                        className={`global-nav-item ${activeNav === item.id ? 'active' : ''} ${item.disabled ? 'ws-nav-disabled' : ''}`}
+                        onClick={item.disabled ? undefined : () => setActiveNav(item.id)}
+                        title={item.disabled ? `${item.label} (Próximamente)` : item.label}
                     >
                         <span className="nav-icon">{item.icon}</span>
                         <span>{item.label}</span>
@@ -339,7 +325,7 @@ export const WorkspaceSidebar = ({
                 <div className="global-nav-spacer" />
 
                 {/* "+" Button with dropdown */}
-                <div ref={menuRef} style={{ position: 'relative' }}>
+                <div ref={menuRef} className="ws-menu-container">
                     <div
                         className="global-nav-add"
                         onClick={() => setShowCreateMenu(v => !v)}
@@ -347,58 +333,33 @@ export const WorkspaceSidebar = ({
                     >+</div>
 
                     {showCreateMenu && (
-                        <div style={{
-                            position: 'absolute', bottom: '44px', left: '60px',
-                            width: 300,
-                            background: '#1E1D21',
-                            border: '1px solid rgba(255,255,255,0.15)',
-                            borderRadius: 10,
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-                            zIndex: 1000,
-                            overflow: 'hidden',
-                        }}>
-                            <div style={{ padding: '12px 16px 8px', fontSize: 13, fontWeight: 700, color: '#9B9B9B', letterSpacing: '0.04em' }}>
+                        <div className="ws-dropdown-menu">
+                            <div className="ws-dropdown-header">
                                 Crear
                             </div>
                             {createItems.map(item => (
                                 <div
                                     key={item.id}
+                                    title={item.disabled ? 'Próximamente' : undefined}
                                     onClick={!item.disabled && item.action ? item.action : undefined}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', gap: 14,
-                                        padding: '10px 16px',
-                                        cursor: item.disabled ? 'not-allowed' : 'pointer',
-                                        opacity: item.disabled ? 0.45 : 1,
-                                        transition: 'background 0.12s',
-                                    }}
-                                    onMouseEnter={e => { if (!item.disabled) e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; }}
-                                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                                    className={`ws-dropdown-item ${item.disabled ? 'ws-dropdown-item-disabled' : ''}`}
                                 >
-                                    <div style={{
-                                        width: 36, height: 36, borderRadius: '50%',
-                                        background: item.color,
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        fontSize: item.id === 'channel' ? 18 : 16, fontWeight: 700,
-                                        color: '#fff', flexShrink: 0,
-                                    }}>
+                                    <div className={`ws-dropdown-icon ${item.id === 'channel' ? 'ws-dropdown-icon-channel' : 'ws-dropdown-icon-default'}`}
+                                         style={{ background: item.color }}>
                                         {item.icon}
                                     </div>
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <div style={{ fontSize: 14, fontWeight: 600, color: '#D1D2D3' }}>
+                                    <div className="ws-dropdown-text-container">
+                                        <div className="ws-dropdown-title">
                                             {item.title}
                                         </div>
                                         {item.desc && (
-                                            <div style={{ fontSize: 12, color: '#9B9B9B', marginTop: 1 }}>
+                                            <div className="ws-dropdown-desc">
                                                 {item.desc}
                                             </div>
                                         )}
                                     </div>
                                     {item.badge && (
-                                        <span style={{
-                                            background: 'linear-gradient(90deg,#ECB22E,#E01E5A)',
-                                            color: '#fff', fontSize: 10, fontWeight: 700,
-                                            padding: '2px 7px', borderRadius: 10,
-                                        }}>{item.badge}</span>
+                                        <span className="ws-dropdown-badge">{item.badge}</span>
                                     )}
                                 </div>
                             ))}
@@ -408,10 +369,9 @@ export const WorkspaceSidebar = ({
 
                 {/* User avatar */}
                 <div
-                    className="global-nav-avatar"
+                    className="global-nav-avatar ws-avatar"
                     title={`${userData?.nombre} — Cerrar sesión`}
                     onClick={onLogout}
-                    style={{ marginTop: 8 }}
                 >
                     {initials}
                     <span className="status-dot" />
@@ -431,7 +391,7 @@ export const WorkspaceSidebar = ({
                             onKeyDown={e => e.key === 'Enter' && handleCreateWorkspace()}
                             autoFocus
                         />
-                        {formFeedback && <p style={{ color: '#E01E5A', fontSize: 13, marginBottom: 8 }}>{formFeedback}</p>}
+                        {formFeedback && <p className="ws-feedback-error">{formFeedback}</p>}
                         <div className="modal-actions">
                             <button onClick={closeModal} disabled={formLoading}>Cancelar</button>
                             <button className="send-btn" onClick={handleCreateWorkspace} disabled={formLoading}>
@@ -448,7 +408,7 @@ export const WorkspaceSidebar = ({
                     <div className="modal-content">
                         <h2>Crear Canal</h2>
                         {!activeWorkspace && (
-                            <p style={{ color: '#ECB22E', fontSize: 13, marginBottom: 10 }}>
+                            <p className="ws-feedback-warn">
                                 ⚠ Selecciona un workspace primero.
                             </p>
                         )}
@@ -459,7 +419,7 @@ export const WorkspaceSidebar = ({
                             disabled={!activeWorkspace}
                             autoFocus
                         />
-                        {formFeedback && <p style={{ color: '#E01E5A', fontSize: 13, marginBottom: 8 }}>{formFeedback}</p>}
+                        {formFeedback && <p className="ws-feedback-error">{formFeedback}</p>}
                         <div className="modal-actions">
                             <button onClick={closeModal} disabled={formLoading}>Cancelar</button>
                             <button className="send-btn" onClick={handleCreateChannel} disabled={formLoading || !activeWorkspace}>
@@ -476,13 +436,13 @@ export const WorkspaceSidebar = ({
                     <div className="modal-content">
                         <h2>Invitar a personas</h2>
                         {!activeWorkspace && (
-                            <p style={{ color: '#ECB22E', fontSize: 13, marginBottom: 10 }}>
+                            <p className="ws-feedback-warn">
                                 ⚠ Selecciona un workspace primero.
                             </p>
                         )}
                         {activeWorkspace && (
-                            <p style={{ color: '#9B9B9B', fontSize: 13, marginBottom: 12 }}>
-                                Invitando al workspace: <strong style={{ color: '#fff' }}>{activeWorkspace.nombre}</strong>
+                            <p className="ws-invite-text">
+                                Invitando al workspace: <strong className="ws-invite-text-bold">{activeWorkspace.nombre}</strong>
                             </p>
                         )}
                         <input
@@ -496,19 +456,13 @@ export const WorkspaceSidebar = ({
                             value={inviteRole}
                             onChange={e => setInviteRole(e.target.value)}
                             disabled={!activeWorkspace}
-                            style={{
-                                width: '100%', padding: '9px 12px', marginBottom: 16,
-                                background: 'rgba(255,255,255,0.08)',
-                                border: '1px solid rgba(255,255,255,0.2)',
-                                color: '#fff', borderRadius: 6, fontSize: 14,
-                                fontFamily: 'inherit', outline: 'none',
-                            }}
+                            className="ws-select"
                         >
                             <option value="member">Miembro</option>
                             <option value="admin">Admin</option>
                         </select>
                         {formFeedback && (
-                            <p style={{ fontSize: 13, marginBottom: 8, color: formFeedback.startsWith('✅') ? '#2EB67D' : '#E01E5A' }}>
+                            <p className={formFeedback.startsWith('✅') ? "ws-feedback-success" : "ws-feedback-error"}>
                                 {formFeedback}
                             </p>
                         )}
@@ -531,28 +485,16 @@ export const WorkspaceSidebar = ({
                             type="text" placeholder="Nuevo nombre del Workspace"
                             value={editWsName} onChange={e => setEditWsName(e.target.value)}
                             onKeyDown={e => e.key === 'Enter' && handleUpdateWorkspace()}
-                            style={{
-                                width: '100%', padding: '9px 12px', marginBottom: 12,
-                                background: 'rgba(255,255,255,0.08)',
-                                border: '1px solid rgba(255,255,255,0.2)',
-                                color: '#fff', borderRadius: 6, fontSize: 14,
-                                fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box'
-                            }}
+                            className="ws-input"
                             autoFocus
                         />
                         <input
                             type="text" placeholder="Nueva descripción"
                             value={editWsDesc} onChange={e => setEditWsDesc(e.target.value)}
                             onKeyDown={e => e.key === 'Enter' && handleUpdateWorkspace()}
-                            style={{
-                                width: '100%', padding: '9px 12px', marginBottom: 16,
-                                background: 'rgba(255,255,255,0.08)',
-                                border: '1px solid rgba(255,255,255,0.2)',
-                                color: '#fff', borderRadius: 6, fontSize: 14,
-                                fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box'
-                            }}
+                            className="ws-input ws-input-last"
                         />
-                        {formFeedback && <p style={{ color: '#E01E5A', fontSize: 13, marginBottom: 8 }}>{formFeedback}</p>}
+                        {formFeedback && <p className="ws-feedback-error">{formFeedback}</p>}
                         <div className="modal-actions">
                             <button onClick={closeModal} disabled={formLoading}>Cancelar</button>
                             <button className="send-btn" onClick={handleUpdateWorkspace} disabled={formLoading}>

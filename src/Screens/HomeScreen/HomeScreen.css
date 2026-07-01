@@ -1,0 +1,9 @@
+.hs-loading {
+    color: #fff;
+    padding: 20px;
+}
+
+.hs-disabled-btn {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

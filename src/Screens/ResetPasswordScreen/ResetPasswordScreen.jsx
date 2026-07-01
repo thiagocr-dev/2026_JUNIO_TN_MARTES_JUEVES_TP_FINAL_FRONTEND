@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router'
 import useForm from '../../hooks/useForm'
 import useRequest from '../../hooks/useRequest'
 import { resetPasswordRequest, resetPassword } from '../../services/authService'
+import './ResetPasswordScreen.css'
 
 export const ResetPasswordScreen = () => {
     const navigate = useNavigate()
@@ -53,31 +54,13 @@ export const ResetPasswordScreen = () => {
     } = useForm(initial_confirm_state, onConfirmSubmit)
 
     return (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '100vh',
-            background: '#1A1D21',
-            color: '#D1D2D3',
-            fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-            padding: '20px'
-        }}>
-            <div style={{
-                width: '100%',
-                maxWidth: '400px',
-                background: '#222529',
-                padding: '40px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
-            }}>
-                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-                    <h1 style={{ color: '#FFFFFF', fontSize: '24px', marginBottom: '8px', fontWeight: 'bold' }}>
+        <div className="reset-container">
+            <div className="reset-box">
+                <div className="reset-header">
+                    <h1 className="reset-title">
                         {!token ? 'Restablecer contraseña' : 'Nueva contraseña'}
                     </h1>
-                    <p style={{ color: '#ABABAD', fontSize: '14px' }}>
+                    <p className="reset-subtitle">
                         {!token 
                             ? 'Ingresa tu correo para recibir las instrucciones de recuperación.' 
                             : 'Elige una contraseña nueva y segura.'
@@ -88,38 +71,21 @@ export const ResetPasswordScreen = () => {
                 {!token ? (
                     // Requesting reset email
                     resetRequestResponse?.ok ? (
-                        <div style={{
-                            background: 'rgba(46, 182, 125, 0.15)',
-                            border: '1px solid #2EB67D',
-                            borderRadius: '6px',
-                            padding: '16px',
-                            textAlign: 'center',
-                            color: '#2EB67D',
-                            marginBottom: '20px'
-                        }}>
-                            <p style={{ margin: 0, fontSize: '14px', color: '#D1D2D3' }}>
+                        <div className="reset-success-box">
+                            <p className="reset-success-text">
                                 {resetRequestResponse.message || 'Se han enviado instrucciones a tu correo.'}
                             </p>
                             <button 
                                 onClick={() => navigate('/login')}
-                                style={{
-                                    marginTop: '16px',
-                                    background: '#2EB67D',
-                                    color: '#FFFFFF',
-                                    border: 'none',
-                                    padding: '8px 16px',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    fontWeight: 'bold'
-                                }}
+                                className="reset-success-btn"
                             >
                                 Volver al Login
                             </button>
                         </div>
                     ) : (
                         <form onSubmit={handleRequestSubmit}>
-                            <div style={{ marginBottom: '20px' }}>
-                                <label htmlFor='email' style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold', color: '#D1D2D3' }}>Email</label>
+                            <div className="reset-form-group">
+                                <label htmlFor='email' className="reset-label">Email</label>
                                 <input 
                                     id='email' 
                                     name='email' 
@@ -128,48 +94,19 @@ export const ResetPasswordScreen = () => {
                                     onChange={handleRequestChange}
                                     required
                                     placeholder="nombre@trabajo.com"
-                                    style={{
-                                        width: '100%',
-                                        padding: '10px 12px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                        background: '#1A1D21',
-                                        color: '#FFFFFF',
-                                        outline: 'none',
-                                        boxSizing: 'border-box'
-                                    }}
+                                    className="reset-input"
                                 />
                             </div>
 
                             <button 
                                 disabled={resetRequestLoading}
-                                style={{
-                                    width: '100%',
-                                    padding: '12px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    background: resetRequestLoading ? '#4A154B' : '#611f69',
-                                    color: '#FFFFFF',
-                                    fontWeight: 'bold',
-                                    fontSize: '15px',
-                                    cursor: resetRequestLoading ? 'not-allowed' : 'pointer',
-                                    transition: 'background 0.2s',
-                                }}
+                                className="reset-btn"
                             >
                                 {resetRequestLoading ? 'Enviando...' : 'Enviar enlace'}
                             </button>
 
                             {resetRequestError && (
-                                <div style={{ 
-                                    color: '#E01E5A', 
-                                    marginTop: '16px', 
-                                    fontSize: '14px', 
-                                    textAlign: 'center',
-                                    background: 'rgba(224, 30, 90, 0.1)',
-                                    border: '1px solid rgba(224, 30, 90, 0.2)',
-                                    padding: '8px',
-                                    borderRadius: '4px'
-                                }}>
+                                <div className="reset-error">
                                     {resetRequestError}
                                 </div>
                             )}
@@ -178,38 +115,21 @@ export const ResetPasswordScreen = () => {
                 ) : (
                     // Confirming reset (entering new password)
                     confirmResponse?.ok ? (
-                        <div style={{
-                            background: 'rgba(46, 182, 125, 0.15)',
-                            border: '1px solid #2EB67D',
-                            borderRadius: '6px',
-                            padding: '16px',
-                            textAlign: 'center',
-                            color: '#2EB67D',
-                            marginBottom: '20px'
-                        }}>
-                            <p style={{ margin: 0, fontSize: '14px', color: '#D1D2D3' }}>
+                        <div className="reset-success-box">
+                            <p className="reset-success-text">
                                 Contraseña restablecida exitosamente. ¡Ya puedes iniciar sesión!
                             </p>
                             <button 
                                 onClick={() => navigate('/login')}
-                                style={{
-                                    marginTop: '16px',
-                                    background: '#2EB67D',
-                                    color: '#FFFFFF',
-                                    border: 'none',
-                                    padding: '8px 16px',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    fontWeight: 'bold'
-                                }}
+                                className="reset-success-btn"
                             >
                                 Iniciar sesión
                             </button>
                         </div>
                     ) : (
                         <form onSubmit={handleConfirmSubmit}>
-                            <div style={{ marginBottom: '16px' }}>
-                                <label htmlFor='newPassword' style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold', color: '#D1D2D3' }}>Nueva contraseña</label>
+                            <div className="reset-form-group-sm">
+                                <label htmlFor='newPassword' className="reset-label">Nueva contraseña</label>
                                 <input 
                                     id='newPassword' 
                                     name='newPassword' 
@@ -218,21 +138,12 @@ export const ResetPasswordScreen = () => {
                                     onChange={handleConfirmChange}
                                     required
                                     placeholder="Al menos 6 caracteres"
-                                    style={{
-                                        width: '100%',
-                                        padding: '10px 12px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                        background: '#1A1D21',
-                                        color: '#FFFFFF',
-                                        outline: 'none',
-                                        boxSizing: 'border-box'
-                                    }}
+                                    className="reset-input"
                                 />
                             </div>
 
-                            <div style={{ marginBottom: '24px' }}>
-                                <label htmlFor='confirmPassword' style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold', color: '#D1D2D3' }}>Confirmar nueva contraseña</label>
+                            <div className="reset-form-group-last">
+                                <label htmlFor='confirmPassword' className="reset-label">Confirmar nueva contraseña</label>
                                 <input 
                                     id='confirmPassword' 
                                     name='confirmPassword' 
@@ -241,48 +152,19 @@ export const ResetPasswordScreen = () => {
                                     onChange={handleConfirmChange}
                                     required
                                     placeholder="Repite la contraseña"
-                                    style={{
-                                        width: '100%',
-                                        padding: '10px 12px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                        background: '#1A1D21',
-                                        color: '#FFFFFF',
-                                        outline: 'none',
-                                        boxSizing: 'border-box'
-                                    }}
+                                    className="reset-input"
                                 />
                             </div>
 
                             <button 
                                 disabled={confirmLoading}
-                                style={{
-                                    width: '100%',
-                                    padding: '12px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    background: confirmLoading ? '#4A154B' : '#611f69',
-                                    color: '#FFFFFF',
-                                    fontWeight: 'bold',
-                                    fontSize: '15px',
-                                    cursor: confirmLoading ? 'not-allowed' : 'pointer',
-                                    transition: 'background 0.2s',
-                                }}
+                                className="reset-btn"
                             >
                                 {confirmLoading ? 'Restableciendo...' : 'Restablecer contraseña'}
                             </button>
 
                             {(confirmError || confirmMatchError) && (
-                                <div style={{ 
-                                    color: '#E01E5A', 
-                                    marginTop: '16px', 
-                                    fontSize: '14px', 
-                                    textAlign: 'center',
-                                    background: 'rgba(224, 30, 90, 0.1)',
-                                    border: '1px solid rgba(224, 30, 90, 0.2)',
-                                    padding: '8px',
-                                    borderRadius: '4px'
-                                }}>
+                                <div className="reset-error">
                                     {confirmError || confirmMatchError}
                                 </div>
                             )}
@@ -290,8 +172,8 @@ export const ResetPasswordScreen = () => {
                     )
                 )}
 
-                <p style={{ marginTop: '24px', fontSize: '14px', color: '#ABABAD', textAlign: 'center' }}>
-                    <Link to={'/login'} style={{ color: '#1264A3', textDecoration: 'none', fontWeight: 'bold' }}>Volver al Inicio de Sesión</Link>
+                <p className="reset-footer">
+                    <Link to={'/login'} className="reset-footer-link">Volver al Inicio de Sesión</Link>
                 </p>
             </div>
         </div>
