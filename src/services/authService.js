@@ -24,7 +24,7 @@ export async function login(email, password) {
         return response
     }
     catch (error) {
-        throw new Error("Error al hacer login")
+        throw new Error(error.message || "Error al hacer login")
     }
 }
 
@@ -47,10 +47,13 @@ export async function register(email, password, name) {
         }
         )
         const response = await response_http.json()
+        if (!response.ok) {
+            throw new Error(response.message)
+        }
         return response
     }
     catch (error) {
-        throw new Error("Error al hacer el registro")
+        throw new Error(error.message || "Error al hacer el registro")
     }
 }
 

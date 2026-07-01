@@ -8,6 +8,7 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newChannelName, setNewChannelName] = useState('');
     const [isCreating, setIsCreating] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
         if (token && workspace) {
@@ -47,6 +48,7 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
     const handleCreate = async () => {
         if (!newChannelName.trim() || isCreating) return;
         setIsCreating(true);
+        setErrorMsg('');
         try {
             const response = await createChannel(token, workspace._id, newChannelName);
             if (response.ok) {
@@ -57,6 +59,7 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
             }
         } catch (error) {
             console.error('Error al crear canal', error);
+            setErrorMsg(error.message || 'Error al crear canal.');
         } finally {
             setIsCreating(false);
         }
@@ -219,6 +222,7 @@ export const ChannelSidebar = ({ token, workspace, onSelectChannel, activeChanne
                             onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
                             autoFocus
                         />
+                        {errorMsg && <p style={{ color: '#E01E5A', fontSize: 13, marginBottom: 8, marginTop: -8 }}>{errorMsg}</p>}
                         <div className="modal-actions">
                             <button onClick={() => setIsModalOpen(false)} disabled={isCreating}>Cancelar</button>
                             <button onClick={handleCreate} className="send-btn" disabled={isCreating}>

@@ -4,6 +4,7 @@ import { getMessages, sendMessage } from '../../../services/messageService';
 export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [chatError, setChatError] = useState('');
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
@@ -33,12 +34,14 @@ export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
         if (!newMessage.trim()) return;
         const text = newMessage;
         setNewMessage(''); // optimistic clear
+        setChatError('');
         try {
             const response = await sendMessage(token, channel._id, text);
             if (response.ok) loadMessages();
         } catch (error) {
             console.error('Error al enviar mensaje:', error);
             setNewMessage(text); // restore on error
+            setChatError('Error al enviar el mensaje. Intenta nuevamente.');
         }
     };
 
@@ -213,6 +216,7 @@ export const ChatArea = ({ token, channel, userData, onOpenMembers }) => {
                         </button>
                     </div>
                 </div>
+                {chatError && <div style={{ color: '#E01E5A', fontSize: 13, marginTop: 8, paddingLeft: 8 }}>{chatError}</div>}
             </div>
         </div>
     );
